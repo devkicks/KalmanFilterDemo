@@ -1,4 +1,4 @@
-% script basic Kalman Filtering
+% Segmentation and Finding the location of blobs in the image
 close all
 clear all
 clc
@@ -25,7 +25,7 @@ outImage = imopen(outImage, SE);
 imshow(outImage);drawnow;
 
 buffer = sprintf('ballSequence/Seg_%d.png', in);
-
+imwrite(outImage, buffer);
 
 curLoc = regionprops(logical(outImage), 'Centroid');
 if(~isempty({curLoc.Centroid}))
@@ -33,3 +33,5 @@ if(~isempty({curLoc.Centroid}))
 end
 
 end
+
+save('ballSequence/position.mat', 'position');

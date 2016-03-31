@@ -1,0 +1,18 @@
+function [ outImage ] = displayPosition( inImage, inPos, colVec )
+%dispPosition Function Displays position on image
+if(~exist(colVec, 'var'))
+    % provide red color
+    colVec = [255; 0 ; 0];
+end
+
+% display a marker using for loop
+outImage = inImage;
+
+for i = -2:2
+    for j = -2:2
+        if( inPos(1) + i < 1 && inPos(2) + j < 1 )
+        outImage(j, 
+
+
+end
+
