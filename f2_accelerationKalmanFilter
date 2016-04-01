@@ -90,6 +90,5 @@ for i = 1:45
     curPosition
     % set current state to previous and advance to next iteration
     Xk1 = Xk;
-    Pk1 = Pk;
-%     pause;
+    pause;
 end

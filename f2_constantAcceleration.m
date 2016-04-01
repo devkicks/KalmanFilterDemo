@@ -11,10 +11,16 @@ load('ballSequence/position.mat');
 
 % State Transition Model
 A = [1 1 0 0; ...
-    0 1 0 0; ...
-    0 0 1 1; ...
-    0 0 0 1];
+     0 1 0 0; ...
+     0 0 1 1; ...
+     0 0 0 1];
 
+B =[0; ...
+    1; ...
+    0; ...
+    1];
+
+constantAcceleration = 10;
 % Measurement Model
 H = [1 0 0 0; ...
     0 0 1 0];
@@ -52,7 +58,7 @@ for i = 1:45
     % 1 ---
     if(sum(curPosition) ~= 0 && KFRunning)
         % predict ...
-        Xk = A*Xk1;
+        Xk = A*Xk1 + B*constantAcceleration;
         Pk = A*Pk1*A' + Q;
         Zk = H*Xk;
         
@@ -67,7 +73,7 @@ for i = 1:45
     % 2 ---
     if(sum(curPosition) == 0 && KFRunning)
         % Predict and advance State Vector
-        Xk = A*Xk1;
+        Xk = A*Xk1 + B*constantAcceleration;
         Pk = A*Pk1*A' + Q;
         Zk = H*Xk;
         

@@ -10,31 +10,33 @@ load('ballSequence/position.mat');
 % Kalman Filter Matrices
 
 % State Transition Model
-A = [1 1 0 0; ...
-    0 1 0 0; ...
-    0 0 1 1; ...
-    0 0 0 1];
+A = [1 1 0.5 0 0 0; ...
+     0 1 1 0 0 0; ...
+     0 0 1 0 0 0; ...
+     0 0 0 1 1 0.5; ...
+     0 0 0 0 1 1; ...
+     0 0 0 0 0 1];
 
 % Measurement Model
-H = [1 0 0 0; ...
-    0 0 1 0];
+H = [1 0 0 0 0 0; ...
+     0 0 0 1 0 0];
 
 % run the outer loop for the sequence
 KFRunning = false;
 Xk = [];
 Xk1 = [];
 Zk = [];
-Pk = eye(4); % prediction covariance
-Pk1 = eye(4);
+Pk = eye(6)*100000; % prediction covariance
+Pk1 = eye(6)*100000;
 
-Q = eye(4)/4;
-R = eye(2)/2;
+Q = eye(6)/50;
+R = eye(2)/50;
 
 for i = 1:45
     curPosition = position(:, i);
     if(sum(curPosition) ~= 0 && ~KFRunning)
         % Initialise KF State Vector Xk
-        Xk1 = [ curPosition(1); 2; curPosition(2); 2];
+        Xk1 = [ curPosition(1); 0; 0; curPosition(2); 0; 0];
         
         % Start KF
         KFRunning = true;
@@ -52,24 +54,24 @@ for i = 1:45
     % 1 ---
     if(sum(curPosition) ~= 0 && KFRunning)
         % predict ...
-        Xk = A*Xk1;
+        Xk = A*Xk1 + mvnrnd([0; 0; 0; 0; 0; 0], Q)';
         Pk = A*Pk1*A' + Q;
-        Zk = H*Xk;
+        Zk = H*Xk + mvnrnd([0; 0], R)';
         
         %Get the Kalman Gain
         K = Pk*H'*inv(H*Pk*H' + R);
         
         % and correct
         Xk = Xk + K*(curPosition - Zk);
-        Pk = (eye(4) - K*H)*Pk;
+        Pk = (eye(6) - K*H)*Pk;
     end
     
     % 2 ---
     if(sum(curPosition) == 0 && KFRunning)
         % Predict and advance State Vector
-        Xk = A*Xk1;
+        Xk = A*Xk1  + mvnrnd([0; 0; 0; 0; 0; 0], Q)';
         Pk = A*Pk1*A' + Q;
-        Zk = H*Xk;
+        Zk = H*Xk + mvnrnd([0; 0], R)';
         
     end
     
@@ -87,6 +89,7 @@ for i = 1:45
     imshow(outImage); drawnow;
     Xk
     Zk
+    Pk
     curPosition
     % set current state to previous and advance to next iteration
     Xk1 = Xk;
