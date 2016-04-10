@@ -10,10 +10,10 @@ load('ballSequence/position.mat');
 % Kalman Filter Matrices
 
 % State Transition Model
-A = [1 1 0.5 0 0 0; ...
+A = [1 1 0 0 0 0; ...
      0 1 1 0 0 0; ...
      0 0 1 0 0 0; ...
-     0 0 0 1 1 0.5; ...
+     0 0 0 1 1 0; ...
      0 0 0 0 1 1; ...
      0 0 0 0 0 1];
 
@@ -29,8 +29,8 @@ Zk = [];
 Pk = eye(6)*100000; % prediction covariance
 Pk1 = eye(6)*100000;
 
-Q = eye(6)/50;
-R = eye(2)/50;
+Q = eye(6)/2;
+R = eye(2)/2;
 
 for i = 1:45
     curPosition = position(:, i);
